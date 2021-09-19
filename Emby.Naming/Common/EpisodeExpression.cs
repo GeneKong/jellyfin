@@ -53,6 +53,11 @@ namespace Emby.Naming.Common
         public bool IsNamed { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether gets or sets property indicating if expression is user defined.
+        /// </summary>
+        public bool IsUserDefined { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether gets or sets property indicating if expression supports episodes with absolute numbers.
         /// </summary>
         public bool SupportsAbsoluteEpisodeNumbers { get; set; }

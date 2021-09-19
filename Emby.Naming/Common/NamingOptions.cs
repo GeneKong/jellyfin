@@ -243,6 +243,16 @@ namespace Emby.Naming.Common
             EpisodeExpressions = new[]
             {
                 // *** Begin Kodi Standard Naming
+                // <!-- Seriesname(2018).S01.p9/xxx.xxxx.123.xxx.xx.mp4 -->
+                new EpisodeExpression(@".*(\\|\/)(?<seriesname>[^\\\/]*)\((?<year>[0-9]{4})\)\.[Ss](?<seasonnumber>[0-9]+)\.p(?<epoffset>[0-9]+)(\\|\/)")
+                {
+                    IsNamed = true,
+                    IsUserDefined = true,
+                    DateTimeFormats = new[]
+                    {
+                        "yyyy",
+                    }
+                },
                 // <!-- foo.s01.e01, foo.s01_e01, S01E02 foo, S01 - E02 -->
                 new EpisodeExpression(@".*(\\|\/)(?<seriesname>((?![Ss]([0-9]+)[][ ._-]*[Ee]([0-9]+))[^\\\/])*)?[Ss](?<seasonnumber>[0-9]+)[][ ._-]*[Ee](?<epnumber>[0-9]+)([^\\/]*)$")
                 {
@@ -283,15 +293,6 @@ namespace Emby.Naming.Common
                 },
 
                 // Case Closed (1996-2007)/Case Closed - 317.mkv
-                // /server/anything_102.mp4
-                // /server/james.corden.2017.04.20.anne.hathaway.720p.hdtv.x264-crooks.mkv
-                // /server/anything_1996.11.14.mp4
-                new EpisodeExpression(@"[\\/._ -](?<seriesname>(?![0-9]+[0-9][0-9])([^\\\/_])*)[\\\/._ -](?<seasonnumber>[0-9]+)(?<epnumber>[0-9][0-9](?:(?:[a-i]|\.[1-9])(?![0-9]))?)([._ -][^\\\/]*)$")
-                {
-                    IsOptimistic = true,
-                    IsNamed = true,
-                    SupportsAbsoluteEpisodeNumbers = false
-                },
                 new EpisodeExpression("[\\/._ -]p(?:ar)?t[_. -]()([ivx]+|[0-9]+)([._ -][^\\/]*)$")
                 {
                     SupportsAbsoluteEpisodeNumbers = true
@@ -349,6 +350,12 @@ namespace Emby.Naming.Common
                 },
 
                 // "blah - 01.avi", "blah 2 - 01.avi", "blah - 01 blah.avi", "blah 2 - 01 blah", "blah - 01 - blah.avi", "blah 2 - 01 - blah"
+                new EpisodeExpression(@".*[\\\/](?<seriesname>([^\\\/0-9])*)[^\\\/]* - (?<epnumber>[0-9]{1,3})(-(?<endingepnumber>[0-9]{2,3}))*[^\\\/]*$")
+                {
+                    IsOptimistic = true,
+                    IsNamed = true
+                },
+
                 new EpisodeExpression(@".*[\\\/][^\\\/]* - (?<epnumber>[0-9]{1,3})(-(?<endingepnumber>[0-9]{2,3}))*[^\\\/]*$")
                 {
                     IsOptimistic = true,
@@ -361,12 +368,20 @@ namespace Emby.Naming.Common
                     IsOptimistic = true,
                     IsNamed = true
                 },
-                // "Episode 16", "Episode 16 - Title"
-                new EpisodeExpression(@".*[\\\/][^\\\/]* (?<epnumber>[0-9]{1,3})(-(?<endingepnumber>[0-9]{2,3}))*[^\\\/]*$")
+                new EpisodeExpression(@"[\\/._ -](?<seriesname>(?![0-9]+[0-9][0-9])([^\\\/_])*)[^\\\/]*[\\\/._ -][Ee](?<epnumber>(pisode)?[0-9]+)([._ -][^\\\/]*)$")
                 {
                     IsOptimistic = true,
-                    IsNamed = true
-                }
+                    IsNamed = true,
+                },
+                // /server/anything_102.mp4
+                // /server/james.corden.2017.04.20.anne.hathaway.720p.hdtv.x264-crooks.mkv
+                // /server/anything_1996.11.14.mp4
+                new EpisodeExpression(@"[\\/._ -](?<seriesname>(?![0-9]+[0-9][0-9])([^\\\/_])*)[\\\/._ -](?<seasonnumber>[0-9]+)(?<epnumber>[0-9][0-9](?:(?:[a-i]|\.[1-9])(?![0-9]))?)([._ -][^\\\/]*)$")
+                {
+                    IsOptimistic = true,
+                    IsNamed = true,
+                    SupportsAbsoluteEpisodeNumbers = false
+                },
             };
 
             EpisodeWithoutSeasonExpressions = new[]

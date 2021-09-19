@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using Emby.Naming.Common;
 
@@ -86,6 +87,10 @@ namespace Emby.Naming.TV
                         .Trim()
                         .Trim('_', '.', '-')
                         .Trim();
+                    if (result.SeasonNumber == null)
+                    {
+                        result.SeasonNumber = 1;
+                    }
                 }
             }
 
@@ -146,6 +151,28 @@ namespace Emby.Naming.TV
                     if (int.TryParse(match.Groups["epnumber"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out num))
                     {
                         result.EpisodeNumber = num;
+                    }
+
+                    if (int.TryParse(match.Groups["epoffset"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out num))
+                    {
+                        string fileName = Path.GetFileName(name);
+                        result.EpisodeNumber = 0;
+                        for (int i = num; i < fileName.Length; i++)
+                        {
+                            if (fileName[i] >= '0' && fileName[i] <= '9')
+                            {
+                                result.EpisodeNumber = (result.EpisodeNumber * 10) + (fileName[i] - '0');
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        if (int.TryParse(match.Groups["year"].Value, NumberStyles.Integer, CultureInfo.InvariantCulture, out num))
+                        {
+                            result.Year = num;
+                        }
                     }
 
                     var endingNumberGroup = match.Groups["endingepnumber"];
